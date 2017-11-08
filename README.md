@@ -15,4 +15,4 @@
 
 ! [ Screenshot of manager adding to existing inventory ] ( /images/Bamazon_Manager_2.png )
 
-! [ Screenshot of manager adding new product ] ( /images/BaBamazon_Manager_3.png )
+! [ Screenshot of manager adding new product ] ( /images/Bamazon_Manager_3.png )
