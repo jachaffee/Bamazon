@@ -49,8 +49,8 @@ function purchaseInquiry() {
 	});
 }
 
-function purchaseTransaction(Item_Number, Amount) {
-	connection.query("SELECT * FROM products WHERE item_id = " + Item_Number, function(error, response) {
+function purchaseTransaction(productSelected, amountSelected) {
+	connection.query("SELECT * FROM products WHERE item_id = " + productSelected, function(error, response) {
 		if (error) {
 			console.log(error);
 		}
@@ -58,31 +58,39 @@ function purchaseTransaction(Item_Number, Amount) {
 		else if (amountSelected <= response[0].stock_quantity) {
 			var transactionCost = response[0].price * amountSelected;
 
-			connection.query("UPDATE products SET stock_quantity = stock_quantity - " + amountSelected + " WHERE item_id " + Item_Number);
+			connection.query("UPDATE products SET stock_quantity = stock_quantity - " + amountSelected + " WHERE item_id = " + productSelected);
 
 			console.log("Thanks for shopping with us! Your total is $" + transactionCost.toFixed(2));
+			keepShopping();
 		}
 		else {
-			console.log("Don't be so greedy! We don't even have that many " + response[0].product_name) + "! Please select a different amount.";
+			console.log("Don't be so greedy! We don't even have that many " + response[0].product_name + "! Please select a different amount.");
+			keepShopping();
 		};
-		inquirer.prompt([
+		
+	});
+
+};
+
+function keepShopping() {
+
+	inquirer.prompt([
 			{
 				name: "keepShopping",
-				type: "input",
-				message: "Would you like to make another transaction (y/n)?"
+				type: "list",
+				message: "Would you like to make another transaction?",
+				choices: ["Yes", "No"]
 			}
-		]).then(function(response) {
-			if(keepShopping === "y" || keepshopping === "yes") {
+	]).then(function(response) {
+		switch (response.keepShopping) {
+			case "Yes":
 				generateTable();
-			}
-			else {
-				console.log("Have a great day, and come see us again!");
-				return;
-			}
-		});
+				break;
+			case "No":
+				console.log("Thanks for stopping by! Please shop with us again!");
+				break;
+		}		
 	});
 };
 
 generateTable();
-
-

@@ -15,9 +15,9 @@ var connection = mysql.createConnection({
 function checkForUpdates() {
 	inquirer.prompt([
 		{
-			name: "tak",
+			name: "task",
 			type: "list",
-			message: "What task would you like to complete?"
+			message: "What task would you like to complete?",
 			choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
 		}
 	]).then(function(response) {
@@ -60,7 +60,7 @@ function generateTable() {
 }
 
 function checkLowInventory() {
-	connection.query("SELECT * FROM products WHERE stock_quantity =< 5", function(error, response) {
+	connection.query("SELECT * FROM products WHERE stock_quantity <= 5", function(error, response) {
 		if (error) {
 			console.log(error);
 		}
@@ -96,13 +96,13 @@ function inventoryInquiry() {
 	});
 }
 
-function restockTransaction(Item_Number, Amount) {
-	connection.query("SELECT * FROM products WHERE item_id = " productSelected, function(error, response) {
+function restockTransaction(productSelected, amountSelected) {
+	connection.query("SELECT * FROM products WHERE item_id = " + productSelected, function(error, response) {
 		if (error) {
 			console.log(error);
 		}
 		else {
-			connection.query("UPDATE proucts SET stock_quantity = stock_quantity + " + amountSelected + " WHERE item_id = " + productSelected);
+			connection.query("UPDATE products SET stock_quantity = stock_quantity + " + amountSelected + " WHERE item_id = " + productSelected);
 			checkForUpdates();
 		}
 	});
@@ -131,17 +131,17 @@ function productInquiry() {
             message: "How many do you want to add?"
         },
 	]).then(function(response) {
-		var newName = answers.Name;
-		var newCategory = answers.Category;
-		var newPrice = answers.Price;
-		var newAmount = answers.Amount;
+		var newName = response.Name;
+		var newCategory = response.Category;
+		var newPrice = response.Price;
+		var newAmount = response.Amount;
 		createNewProduct(newName, newCategory, newPrice, newAmount);
 	});
 }
 
 function createNewProduct(newName, newCategory, newPrice, newAmount) {
-	connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES('" + newName + "', '" + newCategory + "', " + price + ", " + newAmount + ")");
+	connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES('" + newName + "', '" + newCategory + "', " + newPrice + ", " + newAmount + ")");
 	checkForUpdates();
 }
 
-
+checkForUpdates();
